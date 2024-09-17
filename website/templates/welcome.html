@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %} Homepage {% endblock %}
+{% block content %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark"><a class="navbar-brand"
+        href="{{ url_for('views.index') }}">ShortenURL</a><button
+        class="navbar-toggler" type="button"
+        data-toggle="collapse" data-target="#navbar-nav-alt-markup"
+        aria-controls="navbar-nav-alt-markup"
+        aria-expanded="false" aria-label="Toggle navigation"><span
+            class="navbar-toggler-icon"></span></button>
+</nav>
+<div style="background-color: rgb(200, 200, 200);">
+    <div class="text-center p-3"
+        style="font-size: 80px; font-weight: bolder;">ShortenURL </div>
+    <div class="d-flex justify-content-center p-5">
+        <div class="form-group col-md-6">
+            <div class="text-center">
+                <h2><b>Type in a URL which you want to shorten:</b></h2>
+            </div>
+            <div class="text-center"><input type="url" class="form-control m-1"
+                    id="url" name="url"
+                    placeholder="Enter URL" required><button type="submit"
+                    class="btn btn-success m-1 mt-3"
+                    id="shorten-button">Shorten!</button>
+                <div class="d-flex form-group m-1 mt-3"><input type="text"
+                        id="new-url" class="form-control"
+                        placeholder="Your shortened URL shows up here" readonly>
+                    <div class="button-container">
+                        <div id="copied-message" style="display: none;">Copied
+                            to Clipboard!</div><button type="button"
+                            id="copied-button" class="btn btn-dark"><i
+                                class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">const BASE_URL = window.location.host;
+
+    $(document).ready(function () {
+        $('#shorten-button').on('click', function () {
+            $('#new-url').val('Waiting for server response...');
+            $.ajax({
+                type: 'POST',
+                url: '/shorten-and-check-url',
+                contentType: 'application/json',
+                data: JSON.stringify({'oldURL': $('#url').val(), 'baseURL': BASE_URL}),
+                success: function (response) {
+                    $('#new-url').val(response.shortenedURL);
+                },
+                error: function (error) {
+                console.log(error);
+                    $('#new-url').val('Error shortening URL. Please try again.');
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}
